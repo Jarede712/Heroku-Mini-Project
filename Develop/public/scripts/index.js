@@ -5,7 +5,43 @@ const fbBtn = document.getElementById('feedback-btn');
 fbBtn.addEventListener('click', (e) => {
   e.preventDefault();
   window.location.href = '/feedback';
+
+const isValid = validateFormData(tipForm);
+if (!isValid) {
+  // If the form data is invalid, send a POST request to /api/diagnostics
+  fetch('/api/diagnostics', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      // Include any relevant information about the invalid form submission
+      error: 'Invalid form submission',
+      // ...
+    }),
+  })
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+}
 });
+
+function validateFormData(form) {
+  // Get all input elements in the form
+  const inputs = form.querySelectorAll('input');
+
+  // Check if all input fields are filled
+  for (let i = 0; i < inputs.length; i++) {
+    if (inputs[i].value.trim() === '') {
+      return false;
+    }
+  }
+
+  // If all fields are filled, return true
+  return true;
+}
 
 const createCard = (tip) => {
   // Create card
